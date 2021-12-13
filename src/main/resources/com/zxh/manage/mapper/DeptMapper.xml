@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zxh.manage.mapper.DeptMapper">
+  <resultMap id="BaseResultMap" type="com.zxh.manage.pojo.Dept">
+    <id column="id" jdbcType="BIGINT" property="deptId" />
+    <result column="dept_name" jdbcType="VARCHAR" property="deptName" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_user" jdbcType="BIGINT" property="updateUser" />
+    <result column="add_user" jdbcType="BIGINT" property="addUser" />
+    <result column="add_time" jdbcType="TIMESTAMP" property="addTime" />
+    <result column="dept_no" jdbcType="VARCHAR" property="deptNo" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id deptId, dept_name, update_time, update_user, add_user, add_time, dept_no
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dept
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from dept
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="deptId" parameterType="com.zxh.manage.pojo.Dept" useGeneratedKeys="true">
+    insert into dept (dept_name, update_time, update_user, 
+      add_user, add_time, dept_no
+      )
+    values (#{deptName,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=BIGINT}, 
+      #{addUser,jdbcType=BIGINT}, #{addTime,jdbcType=TIMESTAMP}, #{deptNo,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="deptId" parameterType="com.zxh.manage.pojo.Dept" useGeneratedKeys="true">
+    insert into dept
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="deptName != null">
+        dept_name,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+      <if test="addUser != null">
+        add_user,
+      </if>
+      <if test="addTime != null">
+        add_time,
+      </if>
+      <if test="deptNo != null">
+        dept_no,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="deptName != null">
+        #{deptName,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=BIGINT},
+      </if>
+      <if test="addUser != null">
+        #{addUser,jdbcType=BIGINT},
+      </if>
+      <if test="addTime != null">
+        #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deptNo != null">
+        #{deptNo,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zxh.manage.pojo.Dept">
+    update dept
+    <set>
+      <if test="deptName != null">
+        dept_name = #{deptName,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=BIGINT},
+      </if>
+      <if test="addUser != null">
+        add_user = #{addUser,jdbcType=BIGINT},
+      </if>
+      <if test="addTime != null">
+        add_time = #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deptNo != null">
+        dept_no = #{deptNo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{deptId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zxh.manage.pojo.Dept">
+    update dept
+    set dept_name = #{deptName,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=BIGINT},
+      add_user = #{addUser,jdbcType=BIGINT},
+      add_time = #{addTime,jdbcType=TIMESTAMP},
+      dept_no = #{deptNo,jdbcType=VARCHAR}
+    where id = #{deptId,jdbcType=BIGINT}
+  </update>
+
+  <!--  List<DeptResp> selectAll(@Param("deptName")String deptName,@Param("deptNo")String deptNo);-->
+  <select id="selectAll" resultType="com.zxh.manage.resp.DeptResp">
+    select d.id deptId,d.dept_name,d.dept_no,u1.user_name addUser,u2.user_name editUser,d.add_time,d.update_time editTime
+    from dept d
+    left join user_table u1
+    on d.add_user = u1.id
+    left join user_table u2
+    on d.update_user = u2.id
+    <trim prefix="where" suffixOverrides="and">
+      <if test="deptName != null and deptName != ''">
+        dept_name like concat('%',#{deptName},'%') and
+      </if>
+      <if test="deptNo != null and deptNo != ''">
+        dept_no like concat('%',#{deptNo},'%') and
+      </if>
+    </trim>
+  </select>
+
+  <!--  int getCount();-->
+  <select id="getCount" resultType="java.lang.Integer">
+    select count(*) from dept
+  </select>
+</mapper>

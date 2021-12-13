@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zxh.manage.mapper.ModuleMapper">
+  <resultMap id="BaseResultMap" type="com.zxh.manage.pojo.Module">
+    <id column="module_id" jdbcType="BIGINT" property="moduleId" />
+    <result column="module_name" jdbcType="VARCHAR" property="moduleName" />
+    <result column="module_icon" jdbcType="VARCHAR" property="moduleIcon" />
+    <result column="module_url" jdbcType="VARCHAR" property="moduleUrl" />
+    <result column="module_level" jdbcType="INTEGER" property="moduleLevel" />
+    <result column="module_order" jdbcType="INTEGER" property="moduleOrder"/>
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="add_user" jdbcType="BIGINT" property="addUser" />
+    <result column="edit_user" jdbcType="BIGINT" property="editUser" />
+    <result column="add_time" jdbcType="TIMESTAMP" property="addTime" />
+    <result column="edit_time" jdbcType="TIMESTAMP" property="editTime" />
+  </resultMap>
+  <!-- 左侧菜单的结果集 -->
+  <resultMap id="LeftMenu" type="com.zxh.manage.resp.LeftMenuResp">
+    <id column="module_id" jdbcType="BIGINT" property="moduleId" />
+    <result column="module_name" jdbcType="VARCHAR" property="moduleName" />
+    <result column="module_icon" jdbcType="VARCHAR" property="moduleIcon" />
+    <collection property="menus" ofType="com.zxh.manage.resp.LeftMenuResp">
+      <id column="son_id" jdbcType="BIGINT" property="moduleId" />
+      <result column="son_name" jdbcType="VARCHAR" property="moduleName" />
+      <result column="son_icon" jdbcType="VARCHAR" property="moduleIcon" />
+      <result column="son_url" jdbcType="VARCHAR" property="moduleUrl" />
+      <result column="parent_id" jdbcType="VARCHAR" property="parentId" />
+    </collection>
+  </resultMap>
+  <sql id="Base_Column_List">
+    module_id, module_name, module_icon, module_url, moudle_order, module_level, parent_id, add_user,
+    edit_user, add_time, edit_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from module
+    where module_id = #{moduleId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from module
+    where module_id = #{moduleId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="module_id" keyProperty="moduleId" parameterType="com.zxh.manage.pojo.Module" useGeneratedKeys="true">
+    insert into module (module_name, module_icon, module_url, 
+      module_level, parent_id, add_user, 
+      edit_user, add_time, edit_time
+      )
+    values (#{moduleName,jdbcType=VARCHAR}, #{moduleIcon,jdbcType=VARCHAR}, #{moduleUrl,jdbcType=VARCHAR}, 
+      #{moduleLevel,jdbcType=INTEGER}, #{parentId,jdbcType=BIGINT}, #{addUser,jdbcType=BIGINT}, 
+      #{editUser,jdbcType=BIGINT}, #{addTime,jdbcType=TIMESTAMP}, #{editTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" keyColumn="module_id" keyProperty="moduleId" parameterType="com.zxh.manage.pojo.Module" useGeneratedKeys="true">
+    insert into module
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="moduleName != null">
+        module_name,
+      </if>
+      <if test="moduleIcon != null">
+        module_icon,
+      </if>
+      <if test="moduleUrl != null">
+        module_url,
+      </if>
+      <if test="moduleLevel != null">
+        module_level,
+      </if>
+      <if test="moduleOrder != null">
+        module_order,
+      </if>
+      <if test="parentId != null">
+        parent_id,
+      </if>
+      <if test="addUser != null">
+        add_user,
+      </if>
+      <if test="editUser != null">
+        edit_user,
+      </if>
+      <if test="addTime != null">
+        add_time,
+      </if>
+      <if test="editTime != null">
+        edit_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="moduleName != null">
+        #{moduleName,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleIcon != null">
+        #{moduleIcon,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleUrl != null">
+        #{moduleUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleLevel != null">
+        #{moduleLevel,jdbcType=INTEGER},
+      </if>
+      <if test="moduleOrder != null">
+        #{moduleOrder,jdbcType=INTEGER},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="addUser != null">
+        #{addUser,jdbcType=BIGINT},
+      </if>
+      <if test="editUser != null">
+        #{editUser,jdbcType=BIGINT},
+      </if>
+      <if test="addTime != null">
+        #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editTime != null">
+        #{editTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zxh.manage.pojo.Module">
+    update module
+    <set>
+      <if test="moduleName != null">
+        module_name = #{moduleName,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleIcon != null">
+        module_icon = #{moduleIcon,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleUrl != null">
+        module_url = #{moduleUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleLevel != null">
+      module_level = #{moduleLevel,jdbcType=INTEGER},
+      </if>
+      <if test="moduleOrder != null">
+        module_Order = #{moduleOrder,jdbcType=INTEGER},
+      </if>
+      <if test="parentId != null">
+        parent_id = #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="addUser != null">
+        add_user = #{addUser,jdbcType=BIGINT},
+      </if>
+      <if test="editUser != null">
+        edit_user = #{editUser,jdbcType=BIGINT},
+      </if>
+      <if test="addTime != null">
+        add_time = #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editTime != null">
+        edit_time = #{editTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where module_id = #{moduleId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zxh.manage.pojo.Module">
+    update module
+    set module_name = #{moduleName,jdbcType=VARCHAR},
+      module_icon = #{moduleIcon,jdbcType=VARCHAR},
+      module_url = #{moduleUrl,jdbcType=VARCHAR},
+      module_level = #{moduleLevel,jdbcType=INTEGER},
+      parent_id = #{parentId,jdbcType=BIGINT},
+      add_user = #{addUser,jdbcType=BIGINT},
+      edit_user = #{editUser,jdbcType=BIGINT},
+      add_time = #{addTime,jdbcType=TIMESTAMP},
+      edit_time = #{editTime,jdbcType=TIMESTAMP}
+    where module_id = #{moduleId,jdbcType=BIGINT}
+  </update>
+
+  <!--  List<LeftMenuResp> getLeftMenu();-->
+  <select id="getLeftMenu" resultMap="LeftMenu">
+    SELECT m1.module_id,m1.module_name,m1.module_icon,
+    m2.module_id son_id,m2.module_name son_name,m2.module_icon son_icon,m2.module_url son_url,m2.parent_id
+    FROM module m1
+    JOIN module m2
+    ON m1.module_id = m2.parent_id
+  </select>
+
+  <!--  List<LeftMenuResp> getParent();-->
+  <select id="getParent" resultMap="LeftMenu">
+    SELECT module_id,module_name,module_icon
+    FROM module
+    where module_level = 1
+  </select>
+
+  <!--  LeftMenuResp getNode(@Param("id")Long id);-->
+  <select id="getNode" resultType="com.zxh.manage.resp.LeftMenuResp">
+    select module_id,module_name,module_icon,module_order,parent_id,module_url
+    from module
+    where module_id = #{id}
+  </select>
+</mapper>

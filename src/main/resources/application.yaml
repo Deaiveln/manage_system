@@ -1,0 +1,40 @@
+# 配置mybatis规则
+mybatis:
+  mapper-locations: classpath:com/zxh/manage/mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true #开启驼峰命名
+# 配置数据源
+spring:
+  datasource:
+    #MySQL的JDBC连接的url中要加rewriteBatchedStatements参数，并保证5.1.13以上版本的驱动，
+    #才能实现高性能的批量插入。
+    url: jdbc:mysql://localhost:3306/manage?rewriteBatchedStatements=true
+    username: root
+    password: zxhdzxmm345
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    #德鲁伊连接池
+    druid:
+      aop-patterns: com.atguigu.admin.*  #监控SpringBean
+      filters: stat,wall     # 底层开启功能，stat（sql监控），wall（防火墙）
+
+      stat-view-servlet:   # 配置监控页功能
+        enabled: true
+        login-username: root
+        login-password: zxhdzxmm345
+        resetEnable: false
+
+      web-stat-filter:  # 监控web
+        enabled: true
+        urlPattern: /*
+        exclusions: '*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*'
+
+      filter:
+        stat:    # 对上面filters里面的stat的详细配置
+          slow-sql-millis: 1000
+          logSlowSql: true
+          enabled: true
+        wall:
+          enabled: true
+          config:
+            drop-table-allow: false
+

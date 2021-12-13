@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zxh.manage.mapper.RoleMapper">
+  <resultMap id="BaseResultMap" type="com.zxh.manage.pojo.Role">
+    <id column="role_id" jdbcType="BIGINT" property="roleId" />
+    <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_user" jdbcType="BIGINT" property="updateUser" />
+    <result column="role_no" jdbcType="VARCHAR" property="roleNo" />
+    <result column="add_user" jdbcType="BIGINT" property="addUser" />
+    <result column="add_time" jdbcType="TIMESTAMP" property="addTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    role_id, role_name, update_time, update_user, role_no, add_user, add_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from role
+    where role_id = #{roleId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from role
+    where role_id = #{roleId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.zxh.manage.pojo.Role">
+    insert into role (role_id, role_name, update_time, 
+      update_user, role_no, add_user, 
+      add_time)
+    values (#{roleId,jdbcType=BIGINT}, #{roleName,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updateUser,jdbcType=BIGINT}, #{roleNo,jdbcType=VARCHAR}, #{addUser,jdbcType=BIGINT}, 
+      #{addTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zxh.manage.pojo.Role">
+    insert into role
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="roleId != null">
+        role_id,
+      </if>
+      <if test="roleName != null">
+        role_name,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+      <if test="roleNo != null">
+        role_no,
+      </if>
+      <if test="addUser != null">
+        add_user,
+      </if>
+      <if test="addTime != null">
+        add_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="roleId != null">
+        #{roleId,jdbcType=BIGINT},
+      </if>
+      <if test="roleName != null">
+        #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=BIGINT},
+      </if>
+      <if test="roleNo != null">
+        #{roleNo,jdbcType=VARCHAR},
+      </if>
+      <if test="addUser != null">
+        #{addUser,jdbcType=BIGINT},
+      </if>
+      <if test="addTime != null">
+        #{addTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zxh.manage.pojo.Role">
+    update role
+    <set>
+      <if test="roleName != null">
+        role_name = #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=BIGINT},
+      </if>
+      <if test="roleNo != null">
+        role_no = #{roleNo,jdbcType=VARCHAR},
+      </if>
+      <if test="addUser != null">
+        add_user = #{addUser,jdbcType=BIGINT},
+      </if>
+      <if test="addTime != null">
+        add_time = #{addTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where role_id = #{roleId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zxh.manage.pojo.Role">
+    update role
+    set role_name = #{roleName,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=BIGINT},
+      role_no = #{roleNo,jdbcType=VARCHAR},
+      add_user = #{addUser,jdbcType=BIGINT},
+      add_time = #{addTime,jdbcType=TIMESTAMP}
+    where role_id = #{roleId,jdbcType=BIGINT}
+  </update>
+
+  <!--  List<RoleResp> selectAll(@Param("roleName")String roleName, @Param("roleNo")String roleNo);-->
+  <select id="selectAll" resultType="com.zxh.manage.resp.RoleResp">
+    select r.role_id,r.role_name,r.role_no,u1.user_name addUser,u2.user_name editUser,r.add_time,r.update_time editTime
+    from role r
+    left join user_table u1
+    on r.add_user = u1.id
+    left join user_table u2
+    on r.update_user = u2.id
+    <trim prefix="where" suffixOverrides="and">
+      <if test="roleName != null and roleName != ''">
+        role_name like concat('%',#{roleName},'%') and
+      </if>
+      <if test="roleNo != null and roleNo != ''">
+        role_no like concat('%',#{roleNo},'%') and
+      </if>
+    </trim>
+  </select>
+
+  <!--  int getCount();-->
+  <select id="getCount" resultType="java.lang.Integer">
+    select count(*) from role
+  </select>
+
+  <!--  List<RoleModuleResp> getModuleByRoleId(@Param("roleId") Long roleId);-->
+  <select id="getModuleByRoleId" resultType="com.zxh.manage.resp.RoleModuleResp">
+    select m.module_id id,m.parent_id pId,m.module_name name,r.role_id rId
+    from module m
+    left join role_module rm
+    on m.module_id = rm.module_id
+    left join role r
+    on rm.role_id = r.role_id and r.role_id = #{roleId}
+  </select>
+
+  <!--  Integer saveModule(@Param("roleId") Long roleId,@Param("moduleId") Long moduleId);-->
+  <insert id="saveModule" parameterType="java.lang.Long">
+    insert into role_module
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="roleId != null">
+        role_id,
+      </if>
+      <if test="moduleId != null">
+        module_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="roleId != null">
+        #{roleId,jdbcType=BIGINT},
+      </if>
+      <if test="moduleId != null">
+        #{moduleId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+
+  <!--  Integer deleteModule(@Param("roleId") Long roleId,@Param("moduleId") Long moduleId);-->
+  <delete id="deleteModule" parameterType="java.lang.Long">
+    delete from role_module
+    <trim prefix="where" suffixOverrides="and">
+      <if test="roleId != null">
+        role_id = #{roleId} and
+      </if>
+      <if test="moduleId != null">
+        module_id = #{moduleId} and
+      </if>
+    </trim>
+  </delete>
+
+  <!--  List<Long> selectModule(@Param("roleId") Long roleId,@Param("moduleId") Long moduleId);-->
+  <select id="selectModule" resultType="java.lang.Long">
+    select module_id
+    from role_module
+    <trim prefix="where" suffixOverrides="and">
+      <if test="roleId != null">
+        role_id = #{roleId} and
+      </if>
+      <if test="moduleId != null">
+        module_id = #{moduleId} and
+      </if>
+    </trim>
+  </select>
+</mapper>
