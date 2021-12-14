@@ -7,6 +7,7 @@ import com.zxh.manage.service.IModuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,8 +22,23 @@ public class ModuleServiceImpl implements IModuleService {
     private ModuleMapper mapper;
 
     @Override
-    public List<LeftMenuResp> getLeftMenu() {
-        return mapper.getLeftMenu();
+    public List<LeftMenuResp> getLeftMenu(Long id) {
+        List<Long> moduleIds = mapper.selectModuleIds(id);
+        //如果父节点未选中，子节点选中，则把父节点也添加到列表中
+        Module module = null;
+        Long parentId = null;
+        List<Long> moduleIdsCopy = new ArrayList<>();
+        moduleIdsCopy.addAll(moduleIds);
+        for (Long moduleId:moduleIdsCopy){
+            module = mapper.selectByPrimaryKey(moduleId);
+            parentId = module.getParentId();
+            if (parentId != null){
+                if (!moduleIds.contains(parentId)){
+                    moduleIds.add(parentId);
+                }
+            }
+        }
+        return mapper.getLeftMenu(moduleIds);
     }
 
     @Override

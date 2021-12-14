@@ -26,8 +26,9 @@ public interface ModuleMapper {
     /**
      * 查询左侧菜单
      * @return
+     * @param moduleIds
      */
-    List<LeftMenuResp> getLeftMenu();
+    List<LeftMenuResp> getLeftMenu(List<Long> moduleIds);
 
     /**
      * 获取父级菜单
@@ -41,4 +42,11 @@ public interface ModuleMapper {
      * @return
      */
     LeftMenuResp getNode(@Param("id")Long id);
+
+    /**
+     * 根据用户id查询出角色id再查询出菜单权限
+     * @param userId
+     * @return
+     */
+    List<Long> selectModuleIds(Long userId);
 }

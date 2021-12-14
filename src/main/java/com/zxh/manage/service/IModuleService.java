@@ -15,8 +15,9 @@ public interface IModuleService {
     /**
      * 查询左侧菜单
      * @return
+     * @param id
      */
-    List<LeftMenuResp> getLeftMenu();
+    List<LeftMenuResp> getLeftMenu(Long id);
 
     /**
      * 查询父级菜单

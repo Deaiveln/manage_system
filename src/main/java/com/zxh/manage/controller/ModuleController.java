@@ -1,14 +1,17 @@
 package com.zxh.manage.controller;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.zxh.manage.pojo.Module;
 import com.zxh.manage.resp.LeftMenuListResp;
 import com.zxh.manage.resp.LeftMenuResp;
 import com.zxh.manage.resp.NodeResp;
 import com.zxh.manage.resp.Resp;
 import com.zxh.manage.service.IModuleService;
+import com.zxh.manage.utils.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -24,12 +27,20 @@ public class ModuleController {
 
     /**
      * 网页左侧菜单的查询
+     * 根据用户的角色信息来获取菜单
      * @return
      */
     @GetMapping("/api/menu")
-    public LeftMenuListResp getLeftMenu(){
+    public LeftMenuListResp getLeftMenu(HttpServletRequest request){
         LeftMenuListResp resp = new LeftMenuListResp();
-        List<LeftMenuResp> leftMenu = service.getLeftMenu();
+        //取出token
+        String token = request.getHeader("token");
+        if (token == null){
+            token = request.getParameter("token");
+        }
+        DecodedJWT decodedJWT = JWTUtil.checkSign(token);
+        Long id = decodedJWT.getClaim("id").asLong();
+        List<LeftMenuResp> leftMenu = service.getLeftMenu(id);
         if (leftMenu == null){
             resp.setSuccess(false);
             resp.setMsg("菜单获取失败");
@@ -47,7 +58,7 @@ public class ModuleController {
     @PostMapping("/api/Module/list")
     public LeftMenuListResp getList(){
         LeftMenuListResp resp = new LeftMenuListResp();
-        List<LeftMenuResp> leftMenu = service.getLeftMenu();
+        List<LeftMenuResp> leftMenu = service.getLeftMenu(null);
         if (leftMenu == null){
             resp.setSuccess(false);
             resp.setMsg("菜单获取失败");

@@ -28,7 +28,7 @@
     </collection>
   </resultMap>
   <sql id="Base_Column_List">
-    module_id, module_name, module_icon, module_url, moudle_order, module_level, parent_id, add_user,
+    module_id, module_name, module_icon, module_url, module_order, module_level, parent_id, add_user,
     edit_user, add_time, edit_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -168,13 +168,23 @@
     where module_id = #{moduleId,jdbcType=BIGINT}
   </update>
 
-  <!--  List<LeftMenuResp> getLeftMenu();-->
+  <!--  List<LeftMenuResp> getLeftMenu(List<Long> moduleIds);-->
   <select id="getLeftMenu" resultMap="LeftMenu">
     SELECT m1.module_id,m1.module_name,m1.module_icon,
     m2.module_id son_id,m2.module_name son_name,m2.module_icon son_icon,m2.module_url son_url,m2.parent_id
     FROM module m1
     JOIN module m2
     ON m1.module_id = m2.parent_id
+    <if test="moduleIds != null">
+      <foreach collection="moduleIds" item="item_id" separator=","
+               open="where m1.module_id in(" close=") and">
+        #{item_id}
+      </foreach>
+      <foreach collection="moduleIds" item="item_id" separator=","
+               open="m2.module_id in(" close=")">
+        #{item_id}
+      </foreach>
+    </if>
   </select>
 
   <!--  List<LeftMenuResp> getParent();-->
@@ -189,5 +199,16 @@
     select module_id,module_name,module_icon,module_order,parent_id,module_url
     from module
     where module_id = #{id}
+  </select>
+
+  <!--  List<Long> selectModuleIds(Long userId);-->
+  <select id="selectModuleIds" resultType="java.lang.Long">
+    select module_id
+    from role_module
+    where role_id = (
+    select role_id
+    from user_table
+    where id = #{userId}
+    )
   </select>
 </mapper>
